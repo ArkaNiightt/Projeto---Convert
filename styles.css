@@ -94,7 +94,7 @@ select {
 input::placeholder,
 select:invalid,
 option {
-  color: #b2b8de;
+  color: #b2b8de4b;
 }
 
 input:focus,
