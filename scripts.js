@@ -1,9 +1,30 @@
-// Cotação de moedas do dia
+let currentRates = {};
 
-const USD = 5.61;
-const EUR = 5.32;
-const GBP = 7.33;
-const BTC = 351100.61;
+async function fetchGet() {
+    try {
+        const response = await fetch(
+            "https://economia.awesomeapi.com.br/json/last/USD,EUR,GBP,BTC",
+            {
+                method: "GET",
+            }
+        );
+
+        const data = await response.json();
+        currentRates = {
+            USD: parseFloat(data.USDBRL.bid),
+            EUR: parseFloat(data.EURBRL.bid),
+            GBP: parseFloat(data.GBPBRL.bid),
+            BTC: parseFloat(data.BTCBRL.bid),
+        };
+    } catch (error) {
+        console.error("Erro ao buscar as cotações:", error);
+        alert(
+            "Não foi possível buscar as cotações. Tente novamente mais tarde."
+        );
+    }
+}
+
+fetchGet();
 
 const form = document.querySelector("form");
 const amount = document.getElementById("amount");
@@ -12,60 +33,45 @@ const footer = document.querySelector("main footer");
 const description = document.getElementById("description");
 const result = document.getElementById("result");
 
-// Capturando o evento de input para formatar o valor conforme o usuário digita
+// Manipulando o input amount para receber somente números e vírgula/ponto.
 amount.oninput = () => {
-    // Obtém o valor atual do input e remove todos os caracteres não numéricos usando uma expressão regular
-    // \D corresponde a qualquer caractere que não seja um dígito e o "g" aplica a remoção globalmente
-    let value = amount.value.replace(/\D/g, "");
-
-    // Transforma o valor em centavos (exemplo: 150 se tornará 1.50)
-    // Divide o valor numérico por 100 para obter o valor monetário correto
-    value = Number(value) / 100;
-
-    // Atualiza o valor do input formatando-o para o padrão da moeda brasileira (R$)
-    amount.value = formatCurrencyBRL(value);
+    const hasCharactersRegex = /[^\d.,]/g;
+    amount.value = amount.value.replace(hasCharactersRegex, "");
+    amount.value = amount.value.replace(",", ".");
 };
-
-// Função que formata o valor para o formato de moeda brasileiro (BRL)
-function formatCurrencyBRL(value) {
-    // Utiliza a função toLocaleString para formatar o valor como moeda BRL
-    return value.toLocaleString("pt-BR", {
-        style: "currency", // Define o estilo como "currency" (moeda)
-        currency: "BRL", // Define a moeda como Real Brasileiro (BRL)
-    });
-}
 
 // Capturando o evento de submit no formulário
 form.onsubmit = (event) => {
     event.preventDefault();
 
+    if (Object.keys(currentRates).length === 0) {
+        alert("As cotações ainda não foram carregadas. Por favor, aguarde.");
+        return;
+    }
+
     switch (currency.value) {
         case "USD":
-            convertCurrency(amount.value, USD, "US$");
+            convertCurrency(amount.value, currentRates.USD, "US$");
             break;
         case "EUR":
-            convertCurrency(amount.value, EUR, "€");
+            convertCurrency(amount.value, currentRates.EUR, "€");
             break;
-
         case "GBP":
-            convertCurrency(amount.value, GBP, "£");
+            convertCurrency(amount.value, currentRates.GBP, "£");
             break;
         case "BTC":
-            convertCurrency(amount.value, BTC, "₿");
+            convertCurrency(amount.value, currentRates.BTC, "₿");
             break;
     }
 };
 
 // Função para converter a moeda
-
 function convertCurrency(amount, price, symbol) {
-    // console.log(amount, price, symbol)
-
     try {
         // Exibindo a cotação da moeda selecionada
         description.textContent = `${symbol} 1 = ${formatCurrancyBRL(price)}`;
 
-        let total = amount * price;
+        let total = parseFloat(amount) * price;
 
         // Verifica se o resultado não é um número
         if (isNaN(total)) {
@@ -89,10 +95,11 @@ function convertCurrency(amount, price, symbol) {
 }
 
 // Formata a moeda em Real Brasileiro
+const formatCurrencyBRL = new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+});
+
 function formatCurrancyBRL(value) {
-    // Converte para número para utilizar o toLocaleString para  formatar no padrão BRL
-    return Number(value).toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-    });
+    return formatCurrencyBRL.format(value);
 }
