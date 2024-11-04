@@ -1,4 +1,5 @@
 let currentRates = {};
+let createDates = {};
 
 async function fetchGet() {
     try {
@@ -16,6 +17,14 @@ async function fetchGet() {
             GBP: parseFloat(data.GBPBRL.bid),
             BTC: parseFloat(data.BTCBRL.bid),
         };
+
+        createDates = {
+            USD: new Date(data.USDBRL.create_date).toLocaleString('pt-BR'),
+            EUR: new Date(data.EURBRL.create_date).toLocaleString('pt-BR'),
+            GBP: new Date(data.GBPBRL.create_date).toLocaleString('pt-BR'),
+            BTC: new Date(data.BTCBRL.create_date).toLocaleString('pt-BR'),
+        };
+
     } catch (error) {
         console.error("Erro ao buscar as cotações:", error);
         alert(
@@ -31,13 +40,14 @@ const amount = document.getElementById("amount");
 const currency = document.getElementById("currency");
 const footer = document.querySelector("main footer");
 const description = document.getElementById("description");
+const description_time = document.getElementById("description-time");
 const result = document.getElementById("result");
 
 // Manipulando o input amount para receber somente números e vírgula/ponto.
 amount.oninput = () => {
     const hasCharactersRegex = /[^\d.,]/g;
     amount.value = amount.value.replace(hasCharactersRegex, "");
-    amount.value = amount.value.replace(",", ".");
+    amount.value = amount.value.replace(",", ".").replace(/(\..*)\./g, "$1");
 };
 
 // Capturando o evento de submit no formulário
@@ -49,28 +59,40 @@ form.onsubmit = (event) => {
         return;
     }
 
+    let createDate;
     switch (currency.value) {
         case "USD":
             convertCurrency(amount.value, currentRates.USD, "US$");
+            createDate = createDates.USD;
             break;
         case "EUR":
             convertCurrency(amount.value, currentRates.EUR, "€");
+            createDate = createDates.EUR;
             break;
         case "GBP":
             convertCurrency(amount.value, currentRates.GBP, "£");
+            createDate = createDates.GBP;
             break;
         case "BTC":
             convertCurrency(amount.value, currentRates.BTC, "₿");
+            createDate = createDates.BTC;
             break;
+    }
+
+    if (description_time) {
+        description_time.textContent = `${createDate}`;
     }
 };
 
 // Função para converter a moeda
 function convertCurrency(amount, price, symbol) {
     try {
-        // Exibindo a cotação da moeda selecionada
-        description.textContent = `${symbol} 1 = ${formatCurrancyBRL(price)}`;
+        if (!price) {
+            throw new Error("Cotação inválida.");
+        }
 
+        // Exibindo a cotação da moeda selecionada
+        description.textContent = `${symbol} 1 = ${formatToBRL(price)}`;
         let total = parseFloat(amount) * price;
 
         // Verifica se o resultado não é um número
@@ -80,7 +102,7 @@ function convertCurrency(amount, price, symbol) {
             );
         }
         // Exibe o resultado total
-        result.textContent = `${formatCurrancyBRL(total).replace(
+        result.textContent = `${formatToBRL(total).replace(
             "R$",
             ""
         )} Reais`;
@@ -89,7 +111,7 @@ function convertCurrency(amount, price, symbol) {
     } catch (error) {
         // Remove a classe do footer da tela
         footer.classList.remove("show-result");
-        console.log(error);
+        console.error("Erro ao converter a moeda:", error);
         alert("Não foi possível converter. Tente novamente mais tarde.");
     }
 }
@@ -100,6 +122,6 @@ const formatCurrencyBRL = new Intl.NumberFormat("pt-BR", {
     currency: "BRL",
 });
 
-function formatCurrancyBRL(value) {
+function formatToBRL(value) {
     return formatCurrencyBRL.format(value);
 }
