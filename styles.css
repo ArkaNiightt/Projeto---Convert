@@ -1,3 +1,4 @@
+/* Estilizações base */
 * {
   margin: 0;
   padding: 0;
@@ -26,7 +27,8 @@ body {
   height: 100vh;
 
   background-image: url("./img/bg.png");
-  background-size: contain;
+  background-size: cover;
+  background-attachment: fixed;
 
   display: flex;
   align-items: center;
@@ -36,23 +38,33 @@ body {
   gap: 3.12rem;
 
   color: #f1f2f6;
+  animation: fadeIn 1s ease-in;
 }
 
 main {
-  width: 480px;
+  width: 90%;
+  max-width: 480px;
   border-radius: 1.5rem;
-
   border: 1px solid #2f3279;
   overflow-y: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+
+main:hover {
+  transform: scale(1.02);
 }
 
 form {
   background-color: #141534;
-
   display: flex;
   flex-direction: column;
-
   padding: 3.5rem 4rem;
+  transition: background-color 0.3s ease;
+}
+
+form:hover {
+  background-color: #1b1c3f;
 }
 
 label {
@@ -66,27 +78,29 @@ label {
 input,
 select {
   outline: 0;
-
   color: #f1f2f6;
   border: 1px solid #1f2151;
   border-radius: 0.5rem;
-
   background-color: #0e0f25;
   padding: 1.25rem 1rem;
-
   font-family: "Inter", sans-serif;
   font-size: 1rem;
+  transition: border 0.3s ease;
+}
+
+input:focus,
+select:focus {
+  border: 1px solid #4a5dcd;
+  box-shadow: 0 0 8px rgba(74, 93, 205, 0.5);
 }
 
 select {
   -moz-appearance: none;
   -webkit-appearance: none;
   appearance: none;
-
   background: url("./img/chevron-down.svg") no-repeat;
   background-position: calc(100% - 0.75rem) center !important;
   background-color: #0e0f25;
-
   cursor: pointer;
   font-size: 1rem;
 }
@@ -97,48 +111,42 @@ option {
   color: #b2b8de4b;
 }
 
-input:focus,
-select:focus {
-  border: 1px solid #4a5dcd;
-}
-
 button {
   height: 3.25rem;
-
   background-color: #2f34ab;
-
   border: none;
   border-radius: 0.5rem;
-
   color: #f1f2f6;
-
   font-family: "Inter", sans-serif;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
-
+  transition: background-color 0.3s, transform 0.2s;
   margin-top: 3rem;
   outline: 0;
 }
 
 button:hover {
   background-color: #4a5dcd;
+  transform: translateY(-3px);
 }
 
 button:focus {
   outline: 1.5px solid #4a5dcd;
 }
 
+button:active {
+  transform: translateY(0);
+}
+
 footer {
   background-color: #1f2151;
   padding: 2.5rem;
   max-height: 196px;
-
   text-align: center;
   display: none;
-
   overflow-y: scroll;
+  animation: slideUp 0.5s ease-in-out;
 }
 
 .show-result {
@@ -159,4 +167,56 @@ footer h1 {
   font-size: 2rem;
   line-height: 3rem;
   word-break: break-all;
+}
+
+/* Animações e Media Queries */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  form {
+    padding: 2rem;
+  }
+
+  main {
+    width: 95%;
+  }
+}
+
+@media (max-width: 480px) {
+  form {
+    padding: 1.5rem;
+  }
+
+  label {
+    font-size: 0.7rem;
+  }
+
+  input,
+  select {
+    font-size: 0.9rem;
+    padding: 1rem;
+  }
+
+  button {
+    font-size: 0.9rem;
+    height: 2.75rem;
+  }
 }

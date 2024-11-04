@@ -19,12 +19,11 @@ async function fetchGet() {
         };
 
         createDates = {
-            USD: new Date(data.USDBRL.create_date).toLocaleString('pt-BR'),
-            EUR: new Date(data.EURBRL.create_date).toLocaleString('pt-BR'),
-            GBP: new Date(data.GBPBRL.create_date).toLocaleString('pt-BR'),
-            BTC: new Date(data.BTCBRL.create_date).toLocaleString('pt-BR'),
+            USD: new Date(data.USDBRL.create_date).toLocaleString("pt-BR"),
+            EUR: new Date(data.EURBRL.create_date).toLocaleString("pt-BR"),
+            GBP: new Date(data.GBPBRL.create_date).toLocaleString("pt-BR"),
+            BTC: new Date(data.BTCBRL.create_date).toLocaleString("pt-BR"),
         };
-
     } catch (error) {
         console.error("Erro ao buscar as cotações:", error);
         alert(
@@ -90,7 +89,6 @@ function convertCurrency(amount, price, symbol) {
         if (!price) {
             throw new Error("Cotação inválida.");
         }
-
         // Exibindo a cotação da moeda selecionada
         description.textContent = `${symbol} 1 = ${formatToBRL(price)}`;
         let total = parseFloat(amount) * price;
@@ -102,10 +100,7 @@ function convertCurrency(amount, price, symbol) {
             );
         }
         // Exibe o resultado total
-        result.textContent = `${formatToBRL(total).replace(
-            "R$",
-            ""
-        )} Reais`;
+        result.textContent = `${formatToBRL(total).replace("R$", "")} Reais`;
         // Aplica a classe que exibe o footer com o resultado
         footer.classList.add("show-result");
     } catch (error) {
