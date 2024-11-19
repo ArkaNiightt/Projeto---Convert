@@ -222,7 +222,6 @@ footer h1 {
     }
 
     footer {
-        display: flex;
         flex-direction: column;
         display: none;
     }
