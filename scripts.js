@@ -4,7 +4,7 @@ let createDates = {};
 async function fetchGet() {
     try {
         const response = await fetch(
-            "https://economia.awesomeapi.com.br/json/last/USD,EUR,GBP,BTC",
+            "https://economia.awesomeapi.com.br/json/last/USD,EUR,GBP,BTC,DOGE,ETH",
             {
                 method: "GET",
             }
@@ -16,6 +16,8 @@ async function fetchGet() {
             EUR: parseFloat(data.EURBRL.bid),
             GBP: parseFloat(data.GBPBRL.bid),
             BTC: parseFloat(data.BTCBRL.bid),
+            DOGE: parseFloat(data.DOGEBRL.bid),
+            ETH: parseFloat(data.ETHBRL.bid),
         };
 
         createDates = {
@@ -23,6 +25,8 @@ async function fetchGet() {
             EUR: new Date(data.EURBRL.create_date).toLocaleString("pt-BR"),
             GBP: new Date(data.GBPBRL.create_date).toLocaleString("pt-BR"),
             BTC: new Date(data.BTCBRL.create_date).toLocaleString("pt-BR"),
+            DOGE: new Date(data.DOGEBRL.create_date).toLocaleString("pt-BR"),
+            ETH: new Date(data.ETHBRL.create_date).toLocaleString("pt-BR"),
         };
     } catch (error) {
         console.error("Erro ao buscar as cotações:", error);
@@ -76,6 +80,17 @@ form.onsubmit = (event) => {
             convertCurrency(amount.value, currentRates.BTC, "₿");
             createDate = createDates.BTC;
             break;
+        case "DOGE":
+            convertCurrency(amount.value, currentRates.DOGE, "Ð");
+            createDate = createDates.DOGE;
+            break;
+        case "ETH":
+            convertCurrency(amount.value, currentRates.ETH, "⟠");
+            createDate = createDates.ETH;
+            break;
+        default:
+            alert("Moeda inválida.");
+            return;
     }
 
     if (description_time) {
